@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/RodrigoEnable/clean-node-api/issues"
   },
-  "homepage": "https://github.com/RodrigoEnable/clean-node-api#readme"
+  "homepage": "https://github.com/RodrigoEnable/clean-node-api#readme",
+  "devDependencies": {
+    "standard": "^16.0.3"
+  }
 }
