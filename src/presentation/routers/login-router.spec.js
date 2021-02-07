@@ -5,19 +5,50 @@ class LoginRouter {
   route (httpRequest) {
     // se httpRequest for false, ou seja, se ele não foi passado ou se a propriedade body for false
     if (!httpRequest || !httpRequest.body) {
-      return {
-        // retornamos o statusCode: 500
-        statusCode: 500
-      }
+      // retornamos o retorno do método serverError
+      return HttpResponse.serverError()
     }
     const { email, password } = httpRequest.body
     // se a propriedade email dentro do objeto não existir
-    if (!email || !password) {
-      // retornamos o statusCode: 400
-      return {
-        statusCode: 400
-      }
+    if (!email) {
+      // retornamos o retorno do método badRequest
+      // dentro de badRequest podemos informar qual campo queremos testar passando a string correspondente
+      return HttpResponse.badRequest('email')
     }
+    if (!password) {
+      // retornamos o retorno do método badRequest
+      // dentro de badRequest podemos informar qual campo queremos testar passando a string correspondente
+      return HttpResponse.badRequest('password')
+    }
+  }
+}
+
+// os métodos na classe HttpResponse descrevem o motivo dos códigos, o método também é uma espécie de documentação
+class HttpResponse {
+  // método/função badRequest recebe a string passada como parâmetro
+  static badRequest (paramName) {
+    return {
+      statusCode: 400,
+      // criamos a propriedade body que recebe uma instância de MissingParamError e que recebe a string passada como parâmetro
+      // MissingParamError retorna a mensagem de erro
+      body: new MissingParamError(paramName)
+    }
+  }
+
+  static serverError () {
+    return {
+      statusCode: 500
+    }
+  }
+}
+
+// extendemos MissingParamError de Error
+class MissingParamError extends Error {
+  // criamos um constructor que recebe um parâmetro
+  constructor (paramName) {
+    // super recebe o parâmetro e renderiza a mensagem abaixo
+    super(`Missing param: ${paramName}`)
+    this.name = 'MissingParamError'
   }
 }
 
@@ -42,6 +73,8 @@ describe('Login Router', () => {
     const httpResponse = sut.route(httpRequest)
     // esperamos que o nosso httpResponse retorne status 400
     expect(httpResponse.statusCode).toBe(400)
+    // esperamos também uma mensagem de erro correspondente a propriedade que está faltando por meio da da classe MissingParamError que instanciamos
+    expect(httpResponse.body).toEqual(new MissingParamError('password'))
   })
 })
 
@@ -66,6 +99,8 @@ describe('Login Router', () => {
     const httpResponse = sut.route(httpRequest)
     // esperamos que o nosso httpResponse retorne status 400
     expect(httpResponse.statusCode).toBe(400)
+    // esperamos também uma mensagem de erro correspondente a propriedade que está faltando por meio da da classe MissingParamError que instanciamos
+    expect(httpResponse.body).toEqual(new MissingParamError('email'))
   })
 })
 
