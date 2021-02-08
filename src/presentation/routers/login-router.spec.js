@@ -1,9 +1,18 @@
 import LoginRouter from './login-router'
 import MissingParamError from '../helpers/missing-param-error'
 
+// criamos um "helper" para criar uma instância da classe
+// isso é um design pattern bem conhecido, é o factory
+// entenda makeSut como uma fábrica que cria e retorna instâncias da classe LoginRouter()
+// tudo que uma função retorna se torna público, porém podemos controlar o que se torna público e o que fica privado, definindo dentro da função o que ela deve retornar
+// podemos atribuir a uma variável a constante makeSut e, para utilizar as instâncias
+const makeSut = () => {
+  return new LoginRouter()
+}
+
 describe('Login Router', () => {
   test('should return 400 if no password is provided', () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         email: 'any_email@test.com'
@@ -17,7 +26,7 @@ describe('Login Router', () => {
 
 describe('Login Router', () => {
   test('should return 400 if no email is provided', () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         password: 'any_password'
@@ -31,7 +40,7 @@ describe('Login Router', () => {
 
 describe('Login Router', () => {
   test('should return 500 if no httpRequest is provided', () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
     const httpResponse = sut.route()
     expect(httpResponse.statusCode).toBe(500)
   })
@@ -39,7 +48,7 @@ describe('Login Router', () => {
 
 describe('Login Router', () => {
   test('should return 500 if httpRequest has no body', () => {
-    const sut = new LoginRouter()
+    const sut = makeSut()
     const httpRequest = {
     }
     const httpResponse = sut.route(httpRequest)
