@@ -92,3 +92,36 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new UnauthorizedError())
   })
 })
+
+describe('Login Router', () => {
+  test('should return 500 if no AuthUseCase is provided', () => {
+    const sut = new LoginRouter()
+    const httpRequest = {
+      body: {
+        email: 'any_email@test.com',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+  })
+})
+
+describe('Login Router', () => {
+  test('should return 500 if AuthUseCase has no auth method', () => {
+    // precisamos ter um spy diretamente nesse teste, no caso uma classe vazia, já que o teste consiste na falta do método auth
+    class AuthUseCaseSpy {
+    }
+    const authUseCaseSpy = new AuthUseCaseSpy()
+    // LoginRouter recebe authUserCase, porém sem o método auth
+    const sut = new LoginRouter(authUseCaseSpy)
+    const httpRequest = {
+      body: {
+        email: 'any_email@test.com',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+  })
+})
