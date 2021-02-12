@@ -1,6 +1,7 @@
 import LoginRouter from './login-router'
 import MissingParamError from '../helpers/missing-param-error'
 import UnauthorizedError from '../helpers/unauthorized-param-error'
+import ServerError from '../helpers/server-error'
 
 const makeSut = () => {
   class AuthUseCaseSpy {
@@ -52,6 +53,7 @@ describe('Login Router', () => {
     const { sut } = makeSut()
     const httpResponse = sut.route()
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
 
@@ -62,6 +64,7 @@ describe('Login Router', () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
 
@@ -122,6 +125,7 @@ describe('Login Router', () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
 
@@ -141,5 +145,6 @@ describe('Login Router', () => {
     }
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
