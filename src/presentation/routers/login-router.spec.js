@@ -4,6 +4,16 @@ import UnauthorizedError from '../helpers/unauthorized-param-error'
 import ServerError from '../helpers/server-error'
 
 const makeSut = () => {
+  const authUseCaseSpy = makeAuthUseCase()
+  authUseCaseSpy.accessToken = 'valid_token'
+  const sut = new LoginRouter(authUseCaseSpy)
+  return {
+    sut,
+    authUseCaseSpy
+  }
+}
+
+const makeAuthUseCase = () => {
   class AuthUseCaseSpy {
     auth (email, password) {
       this.email = email
@@ -11,13 +21,16 @@ const makeSut = () => {
       return this.accessToken
     }
   }
-  const authUseCaseSpy = new AuthUseCaseSpy()
-  authUseCaseSpy.accessToken = 'valid_token'
-  const sut = new LoginRouter(authUseCaseSpy)
-  return {
-    sut,
-    authUseCaseSpy
+  return new AuthUseCaseSpy()
+}
+
+const makeAuthUseCaseWithError = () => {
+  class AuthUseCaseSpy {
+    auth () {
+      throw new Error()
+    }
   }
+  return new AuthUseCaseSpy()
 }
 
 describe('Login Router', () => {
@@ -131,11 +144,9 @@ describe('Login Router', () => {
 
 describe('Login Router', () => {
   test('should return 500 if AuthUseCase has no auth method', () => {
-    // precisamos ter um spy diretamente nesse teste, no caso uma classe vazia, já que o teste consiste na falta do método auth
     class AuthUseCaseSpy {
     }
     const authUseCaseSpy = new AuthUseCaseSpy()
-    // LoginRouter recebe authUserCase, porém sem o método auth
     const sut = new LoginRouter(authUseCaseSpy)
     const httpRequest = {
       body: {
@@ -146,5 +157,20 @@ describe('Login Router', () => {
     const httpResponse = sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
+  })
+})
+
+describe('Login Router', () => {
+  test('should return 500 if AuthUseCase throws', () => {
+    const authUseCaseSpy = makeAuthUseCaseWithError()
+    const sut = new LoginRouter(authUseCaseSpy)
+    const httpRequest = {
+      body: {
+        email: 'any_email@test.com',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
   })
 })
