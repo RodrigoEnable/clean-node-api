@@ -19,6 +19,7 @@ const makeSut = () => {
 const makeEmailValidator = () => {
   class EmailValidatorSpy {
     isValid (email) {
+      this.email = email
       return this.isEmailValid
     }
   }
@@ -27,11 +28,9 @@ const makeEmailValidator = () => {
   return emailValidatorSpy
 }
 
-// criamos uma factory function para o erro de exceção
 const makeEmailValidatorWithError = () => {
   class EmailValidatorSpy {
     isValid () {
-      // método isValid gera um erro de exceção
       throw new Error()
     }
   }
@@ -264,5 +263,19 @@ describe('Login Router', () => {
     }
     const httpResponse = await sut.route(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
+  })
+})
+
+describe('Login Router', () => {
+  test('should call EmailValidator with correct email', async () => {
+    const { sut, emailValidatorSpy } = makeSut()
+    const httpRequest = {
+      body: {
+        email: 'any_email@test.com',
+        password: 'any_password'
+      }
+    }
+    await sut.route(httpRequest)
+    expect(emailValidatorSpy.email).toBe(httpRequest.body.email)
   })
 })
