@@ -204,3 +204,45 @@ describe('Login Router', () => {
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
   })
 })
+
+// criamos o teste para verificar se a classe LoginRouter está recebendo corretamente uma instância da classe EmailValidator
+describe('Login Router', () => {
+  test('should return 500 if no EmailValidator is provided', async () => {
+    // atribuímos a authUseCaseSpy uma instância da classe AuthUseCaseSpy
+    const authUseCaseSpy = makeAuthUseCase()
+    // alimentamos o construtor de LoginRouter com a instância da classe
+    const sut = new LoginRouter(authUseCaseSpy)
+    const httpRequest = {
+      body: {
+        email: 'any_email@test.com',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+})
+
+// criamos o teste para verificar se a classe LoginRouter está recebendo corretamente, por meio de uma instância da classe EmailValidator, o método isValid
+describe('Login Router', () => {
+  test('should return 500 if EmailValidator has no isValid method', async () => {
+    // atribuímos a authUseCaseSpy uma instância da classe AuthUseCaseSpy
+    const authUseCaseSpy = makeAuthUseCase()
+    // inserimos a classe EmailValidatorSpy vazia, sem o método isValid, a fim de verificar se o teste passará, ou seja, se retornará o código 500
+    class EmailValidatorSpy {
+    }
+    const emailValidatorSpy = new EmailValidatorSpy()
+    // alimentamos o construtor de LoginRouter com a instância da classe
+    const sut = new LoginRouter(authUseCaseSpy, emailValidatorSpy)
+    const httpRequest = {
+      body: {
+        email: 'any_email@test.com',
+        password: 'any_password'
+      }
+    }
+    const httpResponse = await sut.route(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+})
