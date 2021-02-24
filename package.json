@@ -21,14 +21,14 @@
   "lint-staged": {
     "*.js": [
       "npx standard --fix",
-      "npm run test:staged --fix",
+      "npx run test:staged --fix",
       "git add"
     ]
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npm run test:ci --silent --noStackTrace"
+      "pre-push": "npx run test:ci --silent --noStackTrace"
     }
   },
   "author": "",
