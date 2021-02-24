@@ -1,6 +1,6 @@
 export default {
   coverageDirectory: 'coverage',
-  coverageProvider: 'babel',
+  coverageProvider: 'v8',
   testEnvironment: 'node',
   transform: {
     '.(js|jsx|ts|tsx)': '@sucrase/jest-plugin'
