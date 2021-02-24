@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "jest --watch --silent --colors --noStackTrace",
+    "test": "jest --watch --silent --verbose --colors --noStackTrace",
     "test:staged": "jest --passWithNoTests --findRelatedTests --silent --noStackTrace",
-    "test:ci": "jest --coverage"
+    "test:ci": "jest --coverage --silent --noStackTrace"
   },
   "standard": {
     "env": [
@@ -20,15 +20,15 @@
   },
   "lint-staged": {
     "*.js": [
-      "npx standard --fix",
-      "npx run test:staged --fix",
+      "npm standard --fix",
+      "npm run test:staged --fix",
       "git add"
     ]
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "pre-push": "npx run test:ci --silent --noStackTrace"
+      "pre-push": "npm run test:ci --silent --noStackTrace"
     }
   },
   "author": "",
