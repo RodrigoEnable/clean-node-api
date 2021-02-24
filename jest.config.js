@@ -1,5 +1,5 @@
 export default {
-  coverageDirectory: 'coverage',
+  coverageDirectory: '<rootDir>/coverage/',
   coverageProvider: 'v8',
   testEnvironment: 'node',
   transform: {
